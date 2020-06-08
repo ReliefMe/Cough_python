@@ -20,7 +20,7 @@ stopButton.addEventListener("click", stopRecording);
 
 function startRecording() {
 	console.log("recordButton clicked");
-	timer = setTimeout(stopRecording, 11000);
+	timer = setTimeout(stopRecording, 13000);
 	/*
 		Simple constraints object, for more advanced audio features see
 		https://addpipe.com/blog/audio-constraints-getusermedia/

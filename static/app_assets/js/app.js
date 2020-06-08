@@ -65,7 +65,7 @@ function validateForm(step) {
     let subForm = document.querySelectorAll('.step')[step];
     let flag = true;
 
-    // for radio button input (consent form)
+    // for radio button input (consent form) validation
     if (subForm.querySelector('input[type=radio]') != null) {
         if (subForm.querySelector("input[type=radio]").checked !== true) {
             alert("Please, agree with the terms.");
@@ -89,14 +89,13 @@ function validateForm(step) {
     if (subForm.querySelector('input[type=checkbox]') != null) {
         let check = false;
         subForm.querySelectorAll('input[type=checkbox]').forEach((item, index) => {
-            // None can't be checked with others -> implementing other function for this
             // Can't skip the process -- show alert if user tries to do so
             if (item.checked === true)
                 check = true;
         });
 
         if (!check) {
-            alert("Please check atleast one value.")
+            alert("Please check atleast one value.");
             flag = false;
         }
     }
@@ -127,11 +126,10 @@ async function fetchResult(e) {
 
         fd.append("cough_data", cough_audio, "coughFile.wav");
 
-        // 	//$('#'+btn).prop('disabled', true);	
         $.ajax({
             type: "POST",
             url: 'https://predict.reliefme.org/data',
-            // url: 'https://reliefme.azurewebsites.net/data',
+            // url: 'http://127.0.0.1:5000/data',
             data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
             contentType: false, // The content type used when sending data to the server.
             cache: false, // To unable request pages to be cached

@@ -45,6 +45,7 @@ wrapt==1.12.1
 xgboost==1.1.0
 SoundFile==0.10.3.post1
 MarkupSafe==1.1.1
+colorama==0.4.3
 
 
 

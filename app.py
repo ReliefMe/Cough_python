@@ -126,7 +126,7 @@ def data():
             return "Please check if the values are entered correctly"
     
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     application.run(debug=True)
     
 
 # if __name__ == '__main__':
