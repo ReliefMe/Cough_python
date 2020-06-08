@@ -130,7 +130,7 @@ async function fetchResult(e) {
         // 	//$('#'+btn).prop('disabled', true);	
         $.ajax({
             type: "POST",
-            url: 'http://127.0.0.1:5000/data',
+            url: 'http://predict.reliefme.org/data',
             // url: 'https://reliefme.azurewebsites.net/data',
             data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
             contentType: false, // The content type used when sending data to the server.
