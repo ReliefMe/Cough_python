@@ -70,36 +70,11 @@ header img {
 }
 
 /* recording bulb */
-.bulb {
+#bulb {
     animation-iteration-count: infinite;
     background-color: red;
     border-radius: 100%;
     width: 30px;
     height: 30px;
-    display: inline-block;
+    display: none;
 }
-
-/* .loader {
-    width: 70px;
-    height: 35px;
-    overflow: hidden;
-    position: absolute;
-    top: calc(50% - 17px);
-    left: calc(50% - 35px);
-  }
-  
-  .loader-inner {
-    width: 70px;
-    height: 70px;
-    border-style: solid;
-    border-top-color: #FFF;
-    border-right-color: #FFF;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    animation: rotate 3s ease-in-out infinite;
-    transform: rotate(-200deg)
-  } */
-
-

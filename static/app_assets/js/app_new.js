@@ -19,6 +19,7 @@ recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
 
 function startRecording() {
+	document.getElementById('bulb').style.display = 'inline-block';
 	console.log("recordButton clicked");
 	timer = setTimeout(stopRecording, 13000);
 	/*
@@ -53,8 +54,9 @@ function startRecording() {
 		*/
 		audioContext = new AudioContext();
 
-		//update the format 
-		document.getElementById("formats").innerHTML = "Format: 1 channel pcm @ " + audioContext.sampleRate / 1000 + "kHz"
+		//update the format
+		// ! Removed the useless information (not to be displayed to the user)
+		// document.getElementById("formats").innerHTML = "Format: 1 channel pcm @ " + audioContext.sampleRate / 1000 + "kHz"
 
 		/*  assign to gumStream for later use  */
 		gumStream = stream;
@@ -84,6 +86,7 @@ function startRecording() {
 
 
 function stopRecording() {
+	document.getElementById('bulb').style.display = 'none';
 	clearTimeout(timer);
 
 	console.log("stopButton clicked");

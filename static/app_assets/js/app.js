@@ -30,7 +30,7 @@ document.getElementById('previous').addEventListener('click', function () {
 function showStep(step) {
     // display button
     // checking whether the current step is valid or not
-    if (step === 0) {
+    if (step === 0 || step === 1) {
         document.getElementById('previous').style.display = 'none'
         document.getElementById('next').style.display = 'inline';
         document.getElementById('submit').style.display = 'none';
