@@ -177,16 +177,17 @@
             </div>
 
             <!--6-->
-            <div class="step form-group form-check-group">
-                <h3>Please record your Cough.</h3>
-                <div id="controls">
-                    <button id="recordButton" class="btn btn-success btn-lg">Record</button>
-                    <button id="stopButton" class="btn btn-danger btn-lg" disabled style="display: none">Stop</button>
-                    <span class="animate__animated animate__fadeIn" id="bulb"></span>
+            <div class="step">
+                <div class="form-group form-check-group">
+                    <h3>Please record your Cough.</h3>
+                    <div id="controls">
+                        <button id="recordButton" class="btn btn-success btn-lg">Record</button>
+                        <button type="button" id="del-cough" class="btn btn-danger btn-lg"
+                            style="display: none;">Remove</button>
+                        <span class="animate__animated animate__fadeIn" id="bulb"></span>
+                    </div>
+                    <ul id="recordingsList"></ul>
                 </div>
-                <!-- // <div id="formats">Format: start recording to see sample rate</div> -->
-                <!-- // <p><strong>Recordings:</strong></p> -->
-                <ol id="recordingsList"></ol>
             </div>
 
             <div class="row">
@@ -220,7 +221,6 @@
 
     <script src="static/app_assets/js/app_new.js"></script>
     <script src="static/app_assets/js/app.js"></script>
-
 
 </body>
 

@@ -78,3 +78,17 @@ header img {
     height: 30px;
     display: none;
 }
+
+/*recording list*/
+#recordingsList li {
+    list-style: none;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    display: block;
+    padding:0;
+    margin: 10px 0;
+}

@@ -120,7 +120,7 @@ async function fetchResult(e) {
         // 	console.log(rizwan)
         let fd = new FormData(rizwan);
 
-        let cough_audio = await fetch(document.getElementsByTagName('audio')[0].src).then(
+        let cough_audio = await fetch(document.querySelector('#cough-audio').src).then(
             r => r.blob()
         );
 
@@ -129,7 +129,6 @@ async function fetchResult(e) {
         $.ajax({
             type: "POST",
             url: 'https://predict.reliefme.org/data',
-            // url: 'http://127.0.0.1:5000/data',
             data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
             contentType: false, // The content type used when sending data to the server.
             cache: false, // To unable request pages to be cached

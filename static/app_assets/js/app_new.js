@@ -10,13 +10,11 @@ var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext //audio context to help us record
 
 var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
 
 let timer;
 
 //add events to those 2 buttons
 recordButton.addEventListener("click", startRecording);
-stopButton.addEventListener("click", stopRecording);
 
 function startRecording() {
 	document.getElementById('bulb').style.display = 'inline-block';
@@ -37,7 +35,6 @@ function startRecording() {
 	*/
 
 	recordButton.disabled = true;
-	stopButton.disabled = false;
 
 	/*
     	We're using the standard promise based getUserMedia() 
@@ -53,10 +50,6 @@ function startRecording() {
 			the sampleRate defaults to the one set in your OS for your playback device
 		*/
 		audioContext = new AudioContext();
-
-		//update the format
-		// ! Removed the useless information (not to be displayed to the user)
-		// document.getElementById("formats").innerHTML = "Format: 1 channel pcm @ " + audioContext.sampleRate / 1000 + "kHz"
 
 		/*  assign to gumStream for later use  */
 		gumStream = stream;
@@ -80,7 +73,6 @@ function startRecording() {
 	}).catch(function (err) {
 		//enable the record button if getUserMedia() fails
 		recordButton.disabled = false;
-		stopButton.disabled = true;
 	});
 }
 
@@ -89,10 +81,7 @@ function stopRecording() {
 	document.getElementById('bulb').style.display = 'none';
 	clearTimeout(timer);
 
-	console.log("stopButton clicked");
-
 	//disable the stop button, enable the record too allow for new recordings
-	stopButton.disabled = true;
 	recordButton.disabled = false;
 
 	//tell the recorder to stop the recording
@@ -114,10 +103,22 @@ function createDownloadLink(blob) {
 	//add controls to the <audio> element
 	au.controls = true;
 	au.src = url;
+	au.id = "cough-audio";
 
 	//add the new audio element to li
 	li.appendChild(au);
 
 	//add the li element to the ol
 	recordingsList.appendChild(li);
+	recordButton.disabled = true;
+	document.querySelector('#del-cough').style.display = 'inline-block';
 }
+
+// Adding delete cough event on button click
+document.querySelector('#del-cough').addEventListener('click', () => {
+	let li = document.querySelector('#recordingsList li');
+
+	li.remove();
+	recordButton.disabled = false;
+	document.querySelector('#del-cough').style.display = 'none';
+});
