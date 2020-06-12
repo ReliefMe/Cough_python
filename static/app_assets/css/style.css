@@ -70,7 +70,7 @@ header img {
 }
 
 /* recording bulb */
-#bulb {
+#bulb, #bulb_breath {
     animation-iteration-count: infinite;
     background-color: red;
     border-radius: 100%;
@@ -80,7 +80,8 @@ header img {
 }
 
 /*recording list*/
-#recordingsList li {
+#recordingsList li,
+#recordingsBreathList li {
     list-style: none;
     display: inline-flex;
     justify-content: flex-start;

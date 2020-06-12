@@ -179,7 +179,7 @@
             <!--6-->
             <div class="step">
                 <div class="form-group form-check-group">
-                    <h3>Please record your Cough.</h3>
+                    <h3>Please record your Cough for 10 seconds.</h3>
                     <div id="controls">
                         <button id="recordButton" class="btn btn-success btn-lg">Record</button>
                         <button type="button" id="del-cough" class="btn btn-danger btn-lg"
@@ -187,6 +187,16 @@
                         <span class="animate__animated animate__fadeIn" id="bulb"></span>
                     </div>
                     <ul id="recordingsList"></ul>
+                </div>
+                <div class="form-group form-check-group">
+                    <h3>Please record your Deep Breath Sound for 10 seconds.</h3>
+                    <div id="controls">
+                        <button id="recordBreathButton" class="btn btn-success btn-lg">Record</button>
+                        <button type="button" id="del-breath" class="btn btn-danger btn-lg"
+                            style="display: none;">Remove</button>
+                        <span class="animate__animated animate__fadeIn" id="bulb_breath"></span>
+                    </div>
+                    <ul id="recordingsBreathList"></ul>
                 </div>
             </div>
 
@@ -219,7 +229,9 @@
 
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
+    <script src="static/app_assets/js/recordingStates.js"></script>
     <script src="static/app_assets/js/app_new.js"></script>
+    <script src="static/app_assets/js/app_breath.js"></script>
     <script src="static/app_assets/js/app.js"></script>
 
 </body>

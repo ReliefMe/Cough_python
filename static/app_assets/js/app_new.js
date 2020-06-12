@@ -18,6 +18,8 @@ recordButton.addEventListener("click", startRecording);
 
 function startRecording() {
 	document.getElementById('bulb').style.display = 'inline-block';
+	document.querySelector('#recordBreathButton').disabled = true;
+
 	console.log("recordButton clicked");
 	timer = setTimeout(stopRecording, 13000);
 	/*
@@ -72,6 +74,7 @@ function startRecording() {
 
 	}).catch(function (err) {
 		//enable the record button if getUserMedia() fails
+		document.querySelector('#recordBreathButton').disabled = breathHasRecorded ? true : false;
 		recordButton.disabled = false;
 	});
 }
@@ -79,10 +82,10 @@ function startRecording() {
 
 function stopRecording() {
 	document.getElementById('bulb').style.display = 'none';
+	document.querySelector('#recordBreathButton').disabled = breathHasRecorded ? true : false;
 	clearTimeout(timer);
 
 	//disable the stop button, enable the record too allow for new recordings
-	recordButton.disabled = false;
 
 	//tell the recorder to stop the recording
 	rec.stop();
@@ -108,6 +111,9 @@ function createDownloadLink(blob) {
 	//add the new audio element to li
 	li.appendChild(au);
 
+	// ! setting recorded state
+	coughHasRecorded = true;
+
 	//add the li element to the ol
 	recordingsList.appendChild(li);
 	recordButton.disabled = true;
@@ -117,6 +123,9 @@ function createDownloadLink(blob) {
 // Adding delete cough event on button click
 document.querySelector('#del-cough').addEventListener('click', () => {
 	let li = document.querySelector('#recordingsList li');
+
+	// ! setting recorded state
+	coughHasRecorded = false;
 
 	li.remove();
 	recordButton.disabled = false;

@@ -76,7 +76,7 @@ function validateForm(step) {
     // for all input['number'] and select tags
     subForm.querySelectorAll("input[type=number], select").forEach((item) => {
         // console.log(item);
-        if (item.value === '') {
+        if (item.value === '' || item.value <= 0) {
             item.classList.add('is-invalid');
             flag = false;
         } else {
@@ -111,20 +111,33 @@ async function fetchResult(e) {
     e.preventDefault();
 
     if (currentStep === document.getElementsByClassName('step').length - 1 && validateForm(currentStep)) {
-
-        console.log("Submitted");
-
         var messgae_print = $('#message_print').val();
 
         var rizwan = document.getElementById('mydatas');
-        // 	console.log(rizwan)
         let fd = new FormData(rizwan);
 
-        let cough_audio = await fetch(document.querySelector('#cough-audio').src).then(
-            r => r.blob()
-        );
+        let cough_audio, breath_audio;
+
+        if (document.querySelector('#cough-audio') != null) {
+            cough_audio = await fetch(document.querySelector('#cough-audio').src).then(
+                r => r.blob()
+            );
+        } else {
+            alert("Please record cough, its mandatory!");
+            return;
+        }
+
+        if (document.querySelector('#breath-audio') != null) {
+            breath_audio = await fetch(document.querySelector('#breath-audio').src).then(
+                r => r.blob()
+            );
+        } else {
+            alert("Please record breath, its mandatory!");
+            return;
+        }
 
         fd.append("cough_data", cough_audio, "coughFile.wav");
+        fd.append("breath_data", breath_audio, "breathFile.wav");
 
         $.ajax({
             type: "POST",
