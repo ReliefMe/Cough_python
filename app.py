@@ -1,10 +1,15 @@
 from flask import Flask, render_template, url_for, request, jsonify, make_response, flash, redirect
 from sklearn.externals import joblib
 import librosa
+import requests
 
 import cough as CP
 import text_api
+import breath as bm
 import os
+from ip2geotools.databases.noncommercial import DbIpCity
+from urllib.request import urlopen
+
 
 import pandas as pd
 import numpy as np
@@ -42,32 +47,60 @@ def data():
             medical_history = ",".join(medical_history) + ","
             # hasham = request.files
             hasham = request.files.get("cough_data")
+            breath = request.files.get("breath_data")
+            # location = request.form.get("user_locations")
 
             # Textual model
             response = {"age": [int(age)], "gender": [gender],
                 "smoker": [smoker], "patient_reported_symptoms": [symptoms],
                 "medical_history": [medical_history]
                 }
+
+            # if not location:
+                
+            #     ip = urlopen('http://ip.42.pl/raw').read()
+            #     response = DbIpCity.get(ip, api_key="free")
+            #     # print("\n") # new line
+                # print("Your Region is : {0}".format(response.region))
+
+                # print("\n")
+                # print("********************")
+
+                # print("Your Country is : {0}".format(response.country))
+
+                # print("\n")
+                # print("********************")
+
+                # print("Your City is : {0}".format(response.city))
+
+                # print("\n")
+                # print("********************")
+
+
+            ####### DB API ####### 
+            # pload = {'age':age,'gender':gender, 'smoker': smoker, 'reported_symptoms': symptoms, "medical_history": medical_history,
+            #         'cough_audio': hasham.read(), 'breath_audio': breath.read()
+            #         }
+            # r = requests.post('http://54.145.158.236:5000/add_user',data = pload)
+            # print(r.text)
+            ##########################
+
             df1 = pd.DataFrame(response)
-            # print(df1)
             prediction = text_api.predict(df1, "./model81.pkl")
             
             # pp = os.getcwd()
-            path = "./uploads/hasham.wav"
+            cough_path = "./uploads/hasham.wav"
+            breath_path = "./uploads/breath.wav"
             
-            with open(path, 'wb') as ft:
+            with open(cough_path, 'wb') as ft:
                 ft.write(hasham.read())
+
+            with open(breath_path, 'wb') as ft:
+                ft.write(breath.read())
             
-            # fp = open (path, 'wb')
-            # fp.write (hasham.read())
-            # fp.close()
-            fil  = "./uploads/hasham.wav"    
-            f, sr = librosa.load(fil, 22050)
-            duration = librosa.get_duration(y=f, sr=sr)
-            # print(f)
-            print("Duration is: " , duration)
+            # fil_cough  = "./uploads/hasham.wav"    
+            # fil_breath  = "./uploads/breath.wav"    
             
-            # print(hasham.read())
 
             # return symptoms
             # return jsonify(hasham.read())
@@ -88,39 +121,29 @@ def data():
             
             # audio_path = './cough_rec_Int/uploads/'+filename
 
-            cough_result = CP.predict(fil, './cough_model.pkl')
 
-            if prediction[0] == 0 and cough_result == 0:
-                return "Hurray! You are safe. You are Covid free!!!"
-            elif prediction[0] == 0 and cough_result > 0:
+
+            ####### Working code
+            cough_result = CP.predict(cough_path, './cough_model.pkl')
+            breath_result = bm.predict(breath_path, './breath_model.pkl')
+
+            if prediction[0] == 0 and cough_result == 0 and breath_result == 0:
+                return "Hooray! You are safe. You are Covid free!!!"
+            elif prediction[0] == 0 and cough_result > 0 and breath_result == 1:
                 return "We are worried! You need to visit doctor.!!!"
-            elif prediction[0] == 1 and cough_result > 0:
-                return "We are worried! You need to visit doctor!!!"
-            elif prediction[0] == 1 and cough_result == 0:
-                return "Hurray! You are safe. You are Covid free.!!!"
-
-            
-            # if cough_result > 0 and textual_model == 0:
-            #     return "We are worried! You need to visit doctor"
-            # elif cough_result > 0 and textual_model == 1:
-            #     return "We are worried! You need to visit doctor"
-
-            # elif cough_result > 0 and textual_model == 1:
-            #     return "Hurray! You are safe. You are Covid free!!!"
-
-
-
-            # response = {"age": [int(age)], "gender": [gender],
-            # "smoker": [smoker], "patient_reported_symptoms": [symptoms],
-            # "medical_history": [medical_history]
-            # }
-            # df1 = pd.DataFrame(response)
-            # print(df1)
-            # # prediction = text_api.predict(df1, "./cough_testing/model81.pkl")
-            # if prediction[0] == 0:
-            #     return "Great, you are out of danger according to our model keep following precautions." + audio_path
-            # else:
-            #     return "You are at risk according to our model, consult a doctor and keep yourself away from others." + audio_path
+            elif prediction[0] == 1 and cough_result > 0 and breath_result == 1:
+                return "Your health condition seems Serious. You need to visit doctor!!!"
+            elif prediction[0] == 1 and cough_result == 0 and breath_result == 0:
+                return "Hooray! You are safe. You are Covid free, Just take rest and eat healthy..!!!"
+            elif prediction[0] == 1 and cough_result == 0 and breath_result == 1:
+                return "There are very mild Symptoms, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction[0] == 1 and cough_result > 0 and breath_result == 0:
+                return "There are mild Symptoms of Corona, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction[0] == 0 and cough_result > 0 and breath_result == 0:
+                return "There are very mild Symptoms of Corona, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction[0] == 0 and cough_result == 0 and breath_result == 1:
+                return "There are extremely low symptoms, Don't worry, Stay at Home and eat healthy Food!!!"        
+            ##########
 
         except:
             return "Please check if the values are entered correctly"
