@@ -4,155 +4,152 @@ let currentStep = 0;
 showStep(currentStep);
 
 // on next button click
-document.getElementById('next').addEventListener('click', function () {
-    // Validating the form
-    if (validateForm(currentStep)) {
+document.getElementById("next").addEventListener("click", function () {
+  // Validating the form
+  if (validateForm(currentStep)) {
+    // incrementing the step
+    currentStep += 1;
 
-        // incrementing the step
-        currentStep += 1;
-
-        // showing the incremented step;
-        showStep(currentStep);
-    }
-
+    // showing the incremented step;
+    showStep(currentStep);
+  }
 });
 
 // on prev button click
-document.getElementById('previous').addEventListener('click', function () {
+document.getElementById("previous").addEventListener("click", function () {
+  // decrementing the step
+  currentStep -= 1;
 
-    // decrementing the step
-    currentStep -= 1;
-
-    // showing decremented step
-    showStep(currentStep);
+  // showing decremented step
+  showStep(currentStep);
 });
 
 function showStep(step) {
-    // display button
-    // checking whether the current step is valid or not
-    if (step === 0 || step === 1) {
-        document.getElementById('previous').style.display = 'none'
-        document.getElementById('next').style.display = 'inline';
-        document.getElementById('submit').style.display = 'none';
-    } else if (step === document.getElementsByClassName('step').length - 1) {
-        document.getElementById('previous').style.display = 'inline'
-        document.getElementById('next').style.display = 'none';
-        document.getElementById('submit').style.display = 'inline';
+  // display button
+  // checking whether the current step is valid or not
+  if (step === 0 || step === 1) {
+    document.getElementById("previous").style.display = "none";
+    document.getElementById("next").style.display = "inline";
+    document.getElementById("submit").style.display = "none";
+  } else if (step === document.getElementsByClassName("step").length - 1) {
+    document.getElementById("previous").style.display = "inline";
+    document.getElementById("next").style.display = "none";
+    document.getElementById("submit").style.display = "inline";
+  } else {
+    document.getElementById("previous").style.display = "inline";
+    document.getElementById("next").style.display = "inline";
+    document.getElementById("submit").style.display = "none";
+  }
+
+  // displaying question counter
+  document.querySelector("#step-counter h1").textContent = step + 1;
+
+  currentStep = step;
+
+  document.querySelectorAll(".step").forEach((item, index) => {
+    // display step
+    if (index !== step) {
+      item.style.display = "none";
     } else {
-        document.getElementById('previous').style.display = 'inline'
-        document.getElementById('next').style.display = 'inline';
-        document.getElementById('submit').style.display = 'none';
+      item.style.display = "block";
     }
-
-    // displaying question counter
-    document.querySelector('#step-counter h1').textContent = step + 1;
-
-    currentStep = step;
-
-    document.querySelectorAll('.step').forEach((item, index) => {
-        // display step
-        if (index !== step) {
-            item.style.display = 'none';
-        } else {
-            item.style.display = 'block';
-        }
-    });
-
+  });
 }
 
-// for form validation 
+// for form validation
 function validateForm(step) {
-    let subForm = document.querySelectorAll('.step')[step];
-    let flag = true;
+  let subForm = document.querySelectorAll(".step")[step];
+  let flag = true;
 
-    // for radio button input (consent form) validation
-    if (subForm.querySelector('input[type=radio]') != null) {
-        if (subForm.querySelector("input[type=radio]").checked !== true) {
-            alert("Please, agree with the terms.");
-            flag = false;
-        }
+  // for radio button input (consent form) validation
+  if (subForm.querySelector("input[type=radio]") != null) {
+    if (subForm.querySelector("input[type=radio]").checked !== true) {
+      alert("Please, agree with the terms.");
+      flag = false;
     }
+  }
 
-    // for all input['number'] and select tags
-    subForm.querySelectorAll("input[type=number], select").forEach((item) => {
-        // console.log(item);
-        if (item.value === '' || item.value <= 0) {
-            item.classList.add('is-invalid');
-            flag = false;
-        } else {
-            item.classList.remove('is-invalid');
-            item.classList.add('is-valid');
-        }
+  // for all input['number'] and select tags
+  subForm.querySelectorAll("input[type=number], select").forEach((item) => {
+    // console.log(item);
+    if (item.value === "" || item.value <= 0) {
+      item.classList.add("is-invalid");
+      flag = false;
+    } else {
+      item.classList.remove("is-invalid");
+      item.classList.add("is-valid");
+    }
+  });
+
+  // for all input['checkbox']
+  if (subForm.querySelector("input[type=checkbox]") != null) {
+    let check = false;
+    subForm.querySelectorAll("input[type=checkbox]").forEach((item, index) => {
+      // Can't skip the process -- show alert if user tries to do so
+      if (item.checked === true) check = true;
     });
 
-    // for all input['checkbox']
-    if (subForm.querySelector('input[type=checkbox]') != null) {
-        let check = false;
-        subForm.querySelectorAll('input[type=checkbox]').forEach((item, index) => {
-            // Can't skip the process -- show alert if user tries to do so
-            if (item.checked === true)
-                check = true;
-        });
-
-        if (!check) {
-            alert("Please check atleast one value.");
-            flag = false;
-        }
+    if (!check) {
+      alert("Please check atleast one value.");
+      flag = false;
     }
+  }
 
-    return flag;
+  return flag;
 }
 
 // Adding event listener for fetching result
-document.querySelector('#submit').addEventListener('click', fetchResult);
-
+document.querySelector("#submit").addEventListener("click", fetchResult);
 
 async function fetchResult(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (currentStep === document.getElementsByClassName('step').length - 1 && validateForm(currentStep)) {
-        var messgae_print = $('#message_print').val();
+  if (
+    currentStep === document.getElementsByClassName("step").length - 1 &&
+    validateForm(currentStep)
+  ) {
+    var messgae_print = $("#message_print").val();
 
-        var rizwan = document.getElementById('mydatas');
-        let fd = new FormData(rizwan);
+    var rizwan = document.getElementById("mydatas");
+    let fd = new FormData(rizwan);
 
-        let cough_audio, breath_audio;
+    let cough_audio, breath_audio;
 
-        if (document.querySelector('#cough-audio') != null) {
-            cough_audio = await fetch(document.querySelector('#cough-audio').src).then(
-                r => r.blob()
-            );
-        } else {
-            alert("Please record cough, its mandatory!");
-            return;
-        }
-
-        if (document.querySelector('#breath-audio') != null) {
-            breath_audio = await fetch(document.querySelector('#breath-audio').src).then(
-                r => r.blob()
-            );
-        } else {
-            alert("Please record breath, its mandatory!");
-            return;
-        }
-
-        fd.append("cough_data", cough_audio, "coughFile.wav");
-        fd.append("breath_data", breath_audio, "breathFile.wav");
-
-        $.ajax({
-            type: "POST",
-            url: 'https://predict.reliefme.org/data',
-            // url: 'http://127.0.0.1:5000/data',
-            data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-            contentType: false, // The content type used when sending data to the server.
-            cache: false, // To unable request pages to be cached
-            processData: false,
-            success: function (result) {
-                swal({
-                    title: 'Result',
-                    text: result
-                });
-            }
-        });
+    if (document.querySelector("#cough-audio") != null) {
+      cough_audio = await fetch(
+        document.querySelector("#cough-audio").src
+      ).then((r) => r.blob());
+    } else {
+      alert("Please record cough, its mandatory!");
+      return;
     }
+
+    if (document.querySelector("#breath-audio") != null) {
+      breath_audio = await fetch(
+        document.querySelector("#breath-audio").src
+      ).then((r) => r.blob());
+    } else {
+      alert("Please record breath, its mandatory!");
+      return;
+    }
+
+    fd.append("cough_data", cough_audio, "coughFile.wav");
+    fd.append("breath_data", breath_audio, "breathFile.wav");
+
+    $.ajax({
+      type: "POST",
+      url: "https://predict.reliefme.org/data",
+      // url: 'http://127.0.0.1:5000/data',
+      data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+      contentType: false, // The content type used when sending data to the server.
+      cache: false, // To unable request pages to be cached
+      processData: false,
+      success: function (result) {
+        swal({
+          title: "Result",
+          text: result,
+        });
+      },
+    });
+  }
 }
