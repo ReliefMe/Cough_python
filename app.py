@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request, jsonify, make_respon
 from sklearn.externals import joblib
 import librosa
 import requests
+import uuid
 
 import cough as CP
 import text_api
@@ -9,7 +10,7 @@ import breath as bm
 import os
 from ip2geotools.databases.noncommercial import DbIpCity
 from urllib.request import urlopen
-
+from pymongo import MongoClient
 
 import pandas as pd
 import numpy as np
@@ -18,11 +19,14 @@ from werkzeug.utils import secure_filename
 
 application = Flask(__name__)
 
-UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = {'mp3', 'wav'}
+client = MongoClient("localhost", 27017)
+db = client.SentencesDatabase
+users = db["Users"]
 
-application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# UPLOAD_FOLDER = './uploads'
+# ALLOWED_EXTENSIONS = {'mp3', 'wav'}
 
+# application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 #def allowed_file(filename):
 #    return '.' in filename and \
@@ -37,7 +41,7 @@ def index():
 @application.route('/data', methods=['GET', 'POST'])
 def data():
     if request.method == 'POST':
-        try: 
+        try:
             age = request.form.get('age')
             gender = request.form.get('gender')
             smoker = request.form.get('smoker')
@@ -55,6 +59,7 @@ def data():
                 "smoker": [smoker], "patient_reported_symptoms": [symptoms],
                 "medical_history": [medical_history]
                 }
+
 
             # if not location:
                 
@@ -89,19 +94,18 @@ def data():
             prediction = text_api.predict(df1, "./model81.pkl")
             
             # pp = os.getcwd()
-            cough_path = "./uploads/hasham.wav"
-            breath_path = "./uploads/breath.wav"
+            hash = uuid.uuid4().hex
+    
+            cough_path = "./uploads/cough/hasham"
+            breath_path = "./uploads/breath/breath"
+            print(cough_path)
             
-            with open(cough_path, 'wb') as ft:
+            with open(cough_path + hash + ".wav", 'wb') as ft:
                 ft.write(hasham.read())
 
-            with open(breath_path, 'wb') as ft:
+            with open(breath_path + hash + ".wav", 'wb') as ft:
                 ft.write(breath.read())
             
-            # fil_cough  = "./uploads/hasham.wav"    
-            # fil_breath  = "./uploads/breath.wav"    
-            
-
             # return symptoms
             # return jsonify(hasham.read())
             # check if the post request has the file part
@@ -119,14 +123,27 @@ def data():
             #     filename = secure_filename(file.filename)
             #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
-            # audio_path = './cough_rec_Int/uploads/'+filename
 
 
+            ####### Predictions
+            cough_result = CP.predict(cough_path+ hash + ".wav", './cough_model.pkl')
+            breath_result = bm.predict(breath_path+ hash + ".wav", './breath_model.pkl')
 
-            ####### Working code
-            cough_result = CP.predict(cough_path, './cough_model.pkl')
-            breath_result = bm.predict(breath_path, './breath_model.pkl')
-
+            ####### DB insertion
+            users.insert_one({
+                "age": age,
+                "gender" : gender,
+                "smoker" : smoker,
+                "symptoms": symptoms,
+                "medical_history": medical_history,
+                "cough_path": cough_path+ hash + ".wav",
+                "breath_path": breath_path+ hash + ".wav",
+                "statistical_result": prediction[0].tolist(),
+                "cough_results": cough_result,
+                "breath_results":  breath_result.tolist()
+            })
+            
+            ######## Conditions
             if prediction[0] == 0 and cough_result == 0 and breath_result == 0:
                 return "Hooray! You are safe. You are Covid free!!!"
             elif prediction[0] == 0 and cough_result > 0 and breath_result == 1:
@@ -143,13 +160,12 @@ def data():
                 return "There are very mild Symptoms of Corona, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
             elif prediction[0] == 0 and cough_result == 0 and breath_result == 1:
                 return "There are extremely low symptoms, Don't worry, Stay at Home and eat healthy Food!!!"        
-            ##########
 
         except:
             return "Please check if the values are entered correctly"
     
-# if __name__ == "__main__":
-#     application.run(debug=True)
+if __name__ == "__main__":
+    application.run(debug=True)
     
 
 # if __name__ == '__main__':
