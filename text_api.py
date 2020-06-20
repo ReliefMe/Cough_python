@@ -287,7 +287,9 @@ class textual_model:
 #         loaded_model = pickle.load(open(model_name, 'rb'))
 #         result = loaded_model.score(X_test, Y_test)
 #         y_pred = loaded_model.predict(X_test_scaled)
-#         y_pred = loaded_model.predict_proba(X_test)
-        y_pred = loaded_model.predict(X_test)
-        #print("tadaaaa the prediction is : ",y_pred)
-        return y_pred
+        y_pred = loaded_model.predict_proba(X_test)
+        k = np.argmax(y_pred)
+        if k == 1:
+            return y_pred[0][1]
+        elif k == 0:
+            return 0

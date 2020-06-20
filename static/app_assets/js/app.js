@@ -114,7 +114,7 @@ async function fetchResult(e) {
 
         /////// loader added
         $('#loader_1').show();
-        $('#loader_1').html('Please wait...  <img src="static/app_assets/images/loader.gif" />')
+        $('#loader_1').html('Wait.. <img src="static/app_assets/images/loader.gif" />')
         ///////
 
         var messgae_print = $('#message_print').val();
@@ -149,17 +149,63 @@ async function fetchResult(e) {
 
         $.ajax({
             type: "POST",
-            url: 'https://predict.reliefme.org/data',
-            // url: 'http://127.0.0.1:5000/data',
+            // url: 'https://predict.reliefme.org/data',
+            url: 'http://127.0.0.1:5000/data',
             data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
             contentType: false, // The content type used when sending data to the server.
             cache: false, // To unable request pages to be cached
             processData: false,
             success: function (result) {
-                swal({
-                    title: 'Result',
-                    text: result
+                Swal.fire({
+                    html: "<div style='margin-bottom: 10px;'> <img src='static/app_assets/images/logo-black.png' width='300'> </div>" +
+                            "<h4>Your Statistical symptoms show probability of Corona :  </h4>" +
+                            "<h4>Your cough patterns show probability of Corona : </h4>" +
+                            "<h4>Your breath patterns show probability of Corona : </h4>" +
+                            "<h3 class='font-weight-bold text-success' align = 'center'><u>Final Result</u></h3>" +
+                            "<h4 class='font-weight-bold'> </h4>",
+
+                    onBeforeOpen: () => {
+                        const content = Swal.getContent()
+                        if (content) {
+                          const b = content.querySelectorAll('h4')
+                          if (b) {
+                            let {prediction, cough_result, breath_result, msg} = result;
+                            b[0].textContent += prediction + " %";
+                            b[1].textContent += cough_result+ " %";           
+                            b[2].textContent += breath_result+ " %";
+                            b[3].textContent = msg;
+                          }
+                        }
+                    }
+                //     showCancelButton: true,
+                //     confirmButtonColor: '#3085d6',
+                //     cancelButtonColor: '#d33',
+                //     confirmButtonText: 'Download!',
+                //     className: 'window'
+                //     // text: result
+                // }).then((result) => {
+                //     if (result.value) {
+                //         // window.scrollTo(0, 0);
+                //         var image;
+                        
+                //         html2canvas(document.querySelector(".window"), {width: 2000, height: 2000}).then(function (canvas) {
+                            
+                //             image = canvas.toDataURL("", "image/png", 0.9);
+                //             // console.log(image);
+
+                //             let link = document.createElement('a');
+
+                //             link.href = image
+                //             link.download = "ReliefMe-report.png"
+
+                //             link.click();
+
+                //             URL.revokeObjectURL(link.href);
+                //         }).catch(err => console.log(err));
+                        
+                //     }
                 });
+                
 
                 ////////// loader added
                 $('#loader_1').hide();

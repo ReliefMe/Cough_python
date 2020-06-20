@@ -91,7 +91,7 @@ def data():
             ##########################
 
             df1 = pd.DataFrame(response)
-            prediction = text_api.predict(df1, "./model81.pkl")
+            prediction = round(text_api.predict(df1, "./model81.pkl"), 2)
             
             # pp = os.getcwd()
             hash = uuid.uuid4().hex
@@ -125,8 +125,8 @@ def data():
 
 
             ####### Predictions
-            cough_result = CP.predict(cough_path+ hash + ".wav", './cough_model.pkl')
-            breath_result = bm.predict(breath_path+ hash + ".wav", './breath_model.pkl')
+            cough_result = round(CP.predict(cough_path+ hash + ".wav", './cough_model.pkl'), 2)
+            breath_result = round(bm.predict(breath_path+ hash + ".wav", './breath_model.pkl'), 2)
 
             ####### DB insertion
             users.insert_one({
@@ -137,34 +137,45 @@ def data():
                 "medical_history": medical_history,
                 "cough_path": cough_path+ hash + ".wav",
                 "breath_path": breath_path+ hash + ".wav",
-                "statistical_result": prediction[0].tolist(),
+                "statistical_result": prediction,
                 "cough_results": cough_result,
-                "breath_results":  breath_result.tolist()
+                "breath_results":  breath_result
             })
             
+            msg = ""
+
             ######## Conditions
-            if prediction[0] == 0 and cough_result == 0 and breath_result == 0:
-                return "Hooray! You are safe. You are Covid free!!!"
-            elif prediction[0] == 0 and cough_result > 0 and breath_result == 1:
-                return "We are worried! You need to visit doctor.!!!"
-            elif prediction[0] == 1 and cough_result > 0 and breath_result == 1:
-                return "Your health condition seems Serious. You need to visit doctor!!!"
-            elif prediction[0] == 1 and cough_result == 0 and breath_result == 0:
-                return "Hooray! You are safe. You are Covid free, Just take rest and eat healthy..!!!"
-            elif prediction[0] == 1 and cough_result == 0 and breath_result == 1:
-                return "There are very mild Symptoms, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
-            elif prediction[0] == 1 and cough_result > 0 and breath_result == 0:
-                return "There are mild Symptoms of Corona, we suggest you to Isolate yourself and eat healthy Food!!!"
-            elif prediction[0] == 0 and cough_result > 0 and breath_result == 0:
-                return "There are very mild Symptoms of Corona, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
-            elif prediction[0] == 0 and cough_result == 0 and breath_result == 1:
-                return "There are extremely low symptoms, Don't worry, Stay at Home and eat healthy Food!!!"        
+            if prediction == 0 and cough_result == 0 and breath_result == 0:
+                msg = "Hooray! You are safe. You are Covid free!!!"
+            elif prediction == 0 and cough_result > 0 and breath_result > 0:
+                msg = "We are worried! You need to visit doctor.!!!"
+            elif prediction > 0 and cough_result > 0 and breath_result > 0:
+                msg = "Your health condition seems Serious. You need to visit doctor!!!"
+            elif prediction > 0 and cough_result == 0 and breath_result == 0:
+                msg = "Hooray! You are safe. You are Covid free, Just take rest and eat healthy..!!!"
+            elif prediction > 0 and cough_result == 0 and breath_result > 0:
+                msg = "There are very mild Symptoms, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction > 0 and cough_result > 0 and breath_result == 0:
+                msg = "There are mild Symptoms of Corona, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction == 0 and cough_result > 0 and breath_result == 0:
+                msg = "There are very mild Symptoms of Corona, Don't worry, we suggest you to Isolate yourself and eat healthy Food!!!"
+            elif prediction == 0 and cough_result == 0 and breath_result > 0:
+                msg = "There are extremely low symptoms, Don't worry, Stay at Home and eat healthy Food!!!"        
+
+            ############
+
+            return jsonify({
+                "prediction": prediction * 100,
+                "cough_result": cough_result * 100,
+                "breath_result": breath_result * 100,
+                "msg": msg
+            })
 
         except:
             return "Please check if the values are entered correctly"
     
-# if __name__ == "__main__":
-#     application.run(debug=True)
+if __name__ == "__main__":
+    application.run(debug=True)
     
 
 # if __name__ == '__main__':
