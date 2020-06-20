@@ -98,7 +98,6 @@ def data():
     
             cough_path = "./uploads/cough/hasham"
             breath_path = "./uploads/breath/breath"
-            print(cough_path)
             
             with open(cough_path + hash + ".wav", 'wb') as ft:
                 ft.write(hasham.read())

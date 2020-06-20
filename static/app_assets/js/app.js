@@ -111,6 +111,12 @@ async function fetchResult(e) {
     e.preventDefault();
 
     if (currentStep === document.getElementsByClassName('step').length - 1 && validateForm(currentStep)) {
+
+        /////// loader added
+        $('#loader_1').show();
+        $('#loader_1').html('Please wait...  <img src="static/app_assets/images/loader.gif" />')
+        ///////
+
         var messgae_print = $('#message_print').val();
 
         var rizwan = document.getElementById('mydatas');
@@ -124,6 +130,7 @@ async function fetchResult(e) {
             );
         } else {
             alert("Please record cough, its mandatory!");
+            $('#loader_1').hide();  //loader added here
             return;
         }
 
@@ -133,6 +140,7 @@ async function fetchResult(e) {
             );
         } else {
             alert("Please record breath, its mandatory!");
+            $('#loader_1').hide();  //loader added here
             return;
         }
 
@@ -152,6 +160,10 @@ async function fetchResult(e) {
                     title: 'Result',
                     text: result
                 });
+
+                ////////// loader added
+                $('#loader_1').hide();
+                /////////////
             }
         });
     }
