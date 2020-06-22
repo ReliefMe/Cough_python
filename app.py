@@ -3,6 +3,7 @@ from sklearn.externals import joblib
 import librosa
 import requests
 import uuid
+import json
 
 import cough as CP
 import text_api
@@ -61,10 +62,23 @@ def data():
                 }
 
             if location == "furqan":
-                ip = urlopen('http://ip.42.pl/raw').read()
-                loc_response = DbIpCity.get(ip, api_key="free")
+                # ip = urlopen('http://ip.42.pl/raw').read()
+                # ip = request.remote_addr
+                # loc_response = DbIpCity.get(ip, api_key="free")
+
+                ip_address = request.remote_addr
+                resp = requests.get("http://ip-api.com/json/{}".format(ip_address))
+                js = resp.json()
+                # print(js)
+                country = js['country']
+                region = js['regionName']
+                city = js["city"]
+                # print(country)
                 
-                location = f"{loc_response.country}, {loc_response.region}, {loc_response.city}"
+                
+                # location = f"{loc_response.country}, {loc_response.region}, {loc_response.city}"
+                location = f"{country}, {region}, {city}"
+                # print(location)
                
             ####### DB API ####### 
             # pload = {'age':age,'gender':gender, 'smoker': smoker, 'reported_symptoms': symptoms, "medical_history": medical_history,
