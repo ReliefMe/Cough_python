@@ -168,7 +168,7 @@ def predict(cough_fp, saved_model_fp):
         prob_pos = np.mean(class_pos)
         print("prob posit: ", prob_pos)
 #         return "Covid positive: " + str(prob_pos)
-        return prob_pos * 100
+        return prob_pos
     elif not class_pos:
 #         print("covid negative")
 #         prob_neg = np.mean(class_neg)
@@ -177,7 +177,6 @@ def predict(cough_fp, saved_model_fp):
         return 0
     else:
         prob_neg = np.mean(class_neg)
-    #     print(m)
 
         prob_pos = np.mean(class_pos)
         if len(class_neg) > len(class_pos):

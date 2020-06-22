@@ -52,7 +52,7 @@ def data():
             # hasham = request.files
             hasham = request.files.get("cough_data")
             breath = request.files.get("breath_data")
-            # location = request.form.get("user_locations")
+            location = request.form.get("user_locations")
 
             # Textual model
             response = {"age": [int(age)], "gender": [gender],
@@ -60,28 +60,12 @@ def data():
                 "medical_history": [medical_history]
                 }
 
-
-            # if not location:
+            if location == "furqan":
+                ip = urlopen('http://ip.42.pl/raw').read()
+                loc_response = DbIpCity.get(ip, api_key="free")
                 
-            #     ip = urlopen('http://ip.42.pl/raw').read()
-            #     response = DbIpCity.get(ip, api_key="free")
-            #     # print("\n") # new line
-                # print("Your Region is : {0}".format(response.region))
-
-                # print("\n")
-                # print("********************")
-
-                # print("Your Country is : {0}".format(response.country))
-
-                # print("\n")
-                # print("********************")
-
-                # print("Your City is : {0}".format(response.city))
-
-                # print("\n")
-                # print("********************")
-
-
+                location = f"{loc_response.country}, {loc_response.region}, {loc_response.city}"
+               
             ####### DB API ####### 
             # pload = {'age':age,'gender':gender, 'smoker': smoker, 'reported_symptoms': symptoms, "medical_history": medical_history,
             #         'cough_audio': hasham.read(), 'breath_audio': breath.read()
@@ -125,8 +109,11 @@ def data():
 
 
             ####### Predictions
-            cough_result = round(CP.predict(cough_path+ hash + ".wav", './cough_model.pkl'), 2)
-            breath_result = round(bm.predict(breath_path+ hash + ".wav", './breath_model.pkl'), 2)
+            cough_result = CP.predict(cough_path+ hash + ".wav", './cough_model.pkl')
+            breath_result = bm.predict(breath_path+ hash + ".wav", './breath_model.pkl')
+            cough_result = round(cough_result, 2)
+            breath_result = round(breath_result, 2)
+
 
             ####### DB insertion
             users.insert_one({
@@ -139,7 +126,8 @@ def data():
                 "breath_path": breath_path+ hash + ".wav",
                 "statistical_result": prediction,
                 "cough_results": cough_result,
-                "breath_results":  breath_result
+                "breath_results":  breath_result,
+                "location": location
             })
             
             msg = ""
@@ -165,9 +153,9 @@ def data():
             ############
 
             return jsonify({
-                "prediction": prediction * 100,
-                "cough_result": cough_result * 100,
-                "breath_result": breath_result * 100,
+                "prediction": round((prediction * 100), 2),
+                "cough_result": round((cough_result * 100), 2),
+                "breath_result": round((breath_result * 100), 2),
                 "msg": msg
             })
 
