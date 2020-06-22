@@ -15,7 +15,6 @@ from pymongo import MongoClient
 
 import pandas as pd
 import numpy as np
-#from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 application = Flask(__name__)
@@ -62,32 +61,11 @@ def data():
                 }
 
             if location == "furqan":
-                # ip = urlopen('http://ip.42.pl/raw').read()
-                # ip = request.remote_addr
-                # loc_response = DbIpCity.get(ip, api_key="free")
-
-                ip_address = request.remote_addr
-                resp = requests.get("http://ip-api.com/json/{}".format(ip_address))
-                js = resp.json()
-                # print(js)
-                country = js['country']
-                region = js['regionName']
-                city = js["city"]
-                # print(country)
-                
                 
                 # location = f"{loc_response.country}, {loc_response.region}, {loc_response.city}"
-                location = f"{country}, {region}, {city}"
-                # print(location)
-               
-            ####### DB API ####### 
-            # pload = {'age':age,'gender':gender, 'smoker': smoker, 'reported_symptoms': symptoms, "medical_history": medical_history,
-            #         'cough_audio': hasham.read(), 'breath_audio': breath.read()
-            #         }
-            # r = requests.post('http://54.145.158.236:5000/add_user',data = pload)
-            # print(r.text)
-            ##########################
-
+                location = "Empty"
+                
+            
             df1 = pd.DataFrame(response)
             prediction = round(text_api.predict(df1, "./model81.pkl"), 2)
             
@@ -176,8 +154,8 @@ def data():
         except:
             return "Please check if the values are entered correctly"
     
-# if __name__ == "__main__":
-#     application.run(debug=True)
+if __name__ == "__main__":
+    application.run(debug=True)
     
 
 # if __name__ == '__main__':
